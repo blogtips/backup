@@ -1,0 +1,159 @@
+<style type="text/css">
+
+.resultStrings {
+    font-family:Consolas, "Courier New", Courier, monospace;
+    font-size:17px;
+}
+#name01,#hex01,#rgb01,#hsl01,#hwb01,#cmyk01,#ncol01 {
+    white-space:nowrap;
+    background-color:#f9f9f9;
+    background-color:#ffffff;    
+    border:1px solid #d3d3d3;
+    padding-left:4px;
+}
+#helpname01,#helphex01,#helprgb01,#helphsl01,#helphwb01,#helpcmyk01,#helpncol01,#helpasterix {
+    width:60px;
+    color:#757575;
+    font-style:italic;
+}
+#behindresult01 {
+    background-image:url(img_bg_eyeicon.png), url(img_bg_transparent.gif);
+    background-repeat:no-repeat, repeat;background-position:center, top left;
+  padding: 115px 30px 0;}
+#resultTable {
+    border-collapse:separate;
+    border-spacing:2px;
+    width:100%;
+}
+/*input[type=search]::-webkit-search-cancel-button{-webkit-appearance:searchfield-cancel-button;}*/
+.color-container:after,.color-wrapper:after,.color-wrapper-padding:after,.w3-topnav:after,.w3-clear:after,.w3-btn-group:before,.w3-btn-group:after,.w3-btn-bar:before,.w3-btn-bar:after
+{content:"";display:table;clear:both}
+.color-padding-large{padding:12px 24px!important}
+.color-wrapper:after,.color-wrapper-padding:after{content:"";display:table;clear:both}
+.color-text-grey,.w3-hover-text-grey:hover{color:#757575!important}
+.color-input{padding:8px;display:block;border:none;border-bottom:1px solid #808080;width:94%}
+.color-border{border:1px solid #ccc!important}
+.color-content{float:left;width:45%}
+@media screen and (max-width:700px){.color-content{float:none;width:90%;float:none;padding:0 20 0 0;}#behindresult01{    padding: 30px 0 0;}}
+</style>
+<div class="color-container color-padding-large" style="background-color:#f1f1f1;border:1px solid #d3d3d3;">
+  <div class="color-wrapper">
+    <div class="color-content">
+      <h2>Enter a Color:</h2>
+      <label><span class="color-text-grey"><i>name, hex, rgb, hsl, hwb, cmyk, ncol:</i></span></label>
+      <input id="color01" type="text" value="rgb(0, 191, 255)" class="color-input color-border" oninput="convertColor()" onchange="validateColor()" onkeydown="submitOnEnter(event)">
+      <br>
+      <div class="resultStrings">
+        <div id="error01"></div>
+        <table id="resultTable" style="display: table;">
+        <tbody><tr><td id="helpname01">Name</td><td id="name01" style="font-style: italic; color: rgb(117, 117, 117);">no name</td></tr>
+        <tr><td id="helprgb01">Rgb</td><td id="rgb01">rgb(191, 255, 230)</td></tr>
+        <tr><td id="helphex01">Hex</td><td id="hex01">#bfffe6</td></tr>
+        <tr><td id="helphsl01">Hsl</td><td id="hsl01">hsl(156, 100%, 88%)</td></tr>
+        <tr><td id="helphwb01">Hwb</td><td id="hwb01">hwb(156, 75%, 0%)</td></tr>
+        <tr><td id="helpcmyk01">Cmyk</td><td id="cmyk01">cmyk(25%, 0%, 10%, 0%)</td></tr>        
+        <tr><td id="helpncol01">Ncol</td><td id="ncol01">G60, 75%, 0%</td></tr>
+        <!--<tr><td id="helpasterix" colspan="2">*Not a web standard.</td></tr>-->
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="color-content">
+      <div id="behindresult01">
+      <div style="height: 200px; background-color: rgb(191, 255, 230);" id="result01">&nbsp;</div>
+      </div>
+    </div>
+  </div>
+  </div>
+<script>
+function convertColor() {
+    color = document.getElementById("color01").value;
+    if (color == "") {
+        validateColor();
+        return;
+    }
+    color = color.toLowerCase();
+    //document.getElementsByTagName("h1")[0].style.color = dzcolor(color).toRgbString();
+    c = dzcolor(color);
+    if (c.valid) {
+        document.getElementById("resultTable").style.display = "table";
+        document.getElementById("error01").innerHTML = "";
+        document.getElementById("result01").style.backgroundColor = c.toRgbaString();
+        if (c.toName() == "") {
+            document.getElementById("name01").style.fontStyle = "italic";
+            document.getElementById("name01").style.color = "#757575";
+            document.getElementById("name01").innerHTML = "no name";
+        } else {
+            document.getElementById("name01").style.fontStyle = "normal";
+            document.getElementById("name01").style.color = "#000000";
+            document.getElementById("name01").innerHTML = c.toName();
+        }
+        document.getElementById("helpname01").innerHTML = "Name";
+        document.getElementById("hex01").innerHTML = c.toHexString();
+        document.getElementById("helphex01").innerHTML = "Hex";
+        document.getElementById("cmyk01").innerHTML = c.toCmykString();
+        document.getElementById("helpcmyk01").innerHTML = "Cmyk";
+        document.getElementById("helpncol01").innerHTML = "Ncol";
+        if ((color.indexOf("rgba") > -1 || color.indexOf("hsla") > -1 || color.indexOf("hwba") > -1 || color.indexOf("ncola")) > -1
+            || (color.indexOf("cmyk") == -1 && color.split(",").length == 4)
+            || (color.indexOf("cmyk") > -1 && color.split(",").length == 5)) {
+            document.getElementById("rgb01").innerHTML = c.toRgbaString();
+            document.getElementById("hsl01").innerHTML = c.toHslaString();
+            document.getElementById("hwb01").innerHTML = c.toHwbaString();
+            document.getElementById("ncol01").innerHTML = c.toNcolaString();
+            document.getElementById("helprgb01").innerHTML = "Rgba";
+            document.getElementById("helphsl01").innerHTML = "Hsla";
+            document.getElementById("helphwb01").innerHTML = "Hwba";
+        } else {
+            document.getElementById("rgb01").innerHTML = c.toRgbString();
+            document.getElementById("hsl01").innerHTML = c.toHslString();
+            document.getElementById("hwb01").innerHTML = c.toHwbString();
+            document.getElementById("ncol01").innerHTML = c.toNcolString();
+            document.getElementById("helprgb01").innerHTML = "Rgb";
+            document.getElementById("helphsl01").innerHTML = "Hsl";
+            document.getElementById("helphwb01").innerHTML = "Hwb";
+        }
+
+        document.getElementById("linktocp").innerHTML = "<hr style='border-color:#dfdfdf'><p><a href='colors_picker.asp?color=" + c.toHexString().substr(1) + "'>Use this color in our Color Picker</a></p>";
+        
+    } else {
+        validateColor();
+    }
+}
+function validateColor() {
+    var color, c, x, i, l;
+    color = document.getElementById("color01").value;
+    c = dzcolor(color);
+    if (color == "" || !c.valid) {
+        document.getElementById("result01").style.backgroundColor = "#f1f1f1";
+        document.getElementById("resultTable").style.display = "none";
+        document.getElementById("error01").innerHTML = "Not a legal color value";
+        document.getElementById("hex01").innerHTML = "";
+        document.getElementById("rgb01").innerHTML = "";
+        document.getElementById("hsl01").innerHTML = "";
+        document.getElementById("hwb01").innerHTML = "";
+        document.getElementById("ncol01").innerHTML = "";
+        document.getElementById("helpname01").innerHTML = "";
+        document.getElementById("helphex01").innerHTML = "";
+        document.getElementById("helprgb01").innerHTML = "";
+        document.getElementById("helphsl01").innerHTML = "";
+        document.getElementById("helphwb01").innerHTML = "";
+        document.getElementById("helpncol01").innerHTML = "";
+    } else {
+        document.getElementById("resultTable").style.display = "table";
+        document.getElementById("error01").innerHTML = "";
+    
+        convertColor();
+    }
+}
+function submitOnEnter(e) {
+    keyboardKey = e.which || e.keyCode;
+    if (keyboardKey == 13) {
+        validateColor();
+    }
+}
+
+convertColor();
+</script>
+
+<script src="https://cdn.rawgit.com/duczone/public-javascript/master/dzcolorconvert.js"></script>
