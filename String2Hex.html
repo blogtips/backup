@@ -1,0 +1,73 @@
+<html>
+<!-- Developer: Austin Garcia-->
+<!-- Date: 1-19 -15-->
+<!-- Description: Real time string to hex converter and hex to string converter-->
+
+	<head> 
+
+		<style type"text/css">
+			#s{
+				background-color: white;
+				height: 80%;
+				border: solid 3px black;
+			}
+			h2 {
+				display: inline;
+			}
+			#h{
+				background-color:white;
+				color: blue;
+				height: 80%;
+				border: solid 3px green;
+			}
+			
+		</style>
+
+			<SCRIPT>
+				function strfunc() {
+				
+					 var text1 = document.getElementById('s').value; 
+					 document.getElementById('h').value = str2hex(text1);
+				}
+				function hexfunc() {
+					
+					var text2 = document.getElementById('h').value; 
+					document.getElementById('s').value = hex2str(text2);
+				
+				}
+				function str2hex(str) {
+							var hex = '';
+							for(var i=0;i<str.length;i++) {
+								hex += ''+str.charCodeAt(i).toString(16);
+							}
+							return hex;
+						}
+				function hex2str(hex) {
+						var str = '';
+						for (var i = 0; i < hex.length; i += 2) {
+							var v = parseInt(hex.substr(i, 2), 16);
+							if (v) str += String.fromCharCode(v);
+						}
+						return str;
+					}  
+		
+					</SCRIPT>	
+
+	</head>
+
+<body>
+
+	<form name = "form1" id = "string">
+
+		<h2>String</h2>
+		<textarea name = "Txt1" id ="s" rows="20" cols="30" onkeyup="strfunc()">
+		</textarea>
+		<h2>Hex</h2>
+		<textarea name = "Txt2" id="h" rows="20" cols="30" onkeyup="hexfunc()">
+		</textarea>
+
+	</form>
+
+</body>
+
+</html>
