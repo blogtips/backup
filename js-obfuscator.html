@@ -1,0 +1,105 @@
+<html>
+	<head>
+	<title>JS String Obfuscator</title>
+		<script type='text/javascript'>
+			// -- THIS IS JUST TO SET THE HTA WINDOW SIZE -- //
+			sW = screen.width;
+			sH = screen.height;
+			window.moveTo(sW, sH);
+			window.resizeTo(854, 374);
+			// -- THIS IS JUST TO SET THE HTA WINDOW SIZE -- //
+		</script>
+		<!-- just HTA app settings -->
+		<hta:application
+			applicationName="JSObfuscator"
+			border="thin"
+			id="050100101001001111"
+			innerBorder="no"
+			maximizeButton="no"
+			scroll="no"
+			singleInstance="yes"
+			version="0.5"/>
+		<!-- just HTA app settings -->
+		<meta http-equiv='MSThemeCompatible' content='yes'/>
+	</head>
+	<body topMargin='0' leftMargin='0'>
+		<table width='854px' height='374px' border='1' borderColor='#808080' cellSpacing='0' cellPadding='0'>
+			<tr height='344px'>
+				<td align='center'>
+					<textarea id='inp' cols='50' rows='20' wrap="off">function() {
+	var a="ABC";
+	var b="DEF";
+	alert(a+b);
+}</textarea>
+				</td>
+				<td align='center'>
+					<textarea id='out' cols='50' rows='21' readOnly='true'></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td align='center'>
+					<input type='button' onClick='obfuscateJS();' style='width:100%;height=100%;' value='Obfuscate JS'/>
+				</td>
+				<td align='center'>
+					<select id='sel' style='width:100%;height=100%;'>
+						<option>--[select string quotes type]--</option>
+						<option>" %string% "</option>
+						<option>' %string% '</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+	</body>
+	<script type='text/javascript'>
+		// -- THIS IS JUST TO SET THE HTA WINDOW SIZE -- //
+		iW = (854 + (854 - document.body.offsetWidth));
+		iH = (374 + (374 - document.body.offsetHeight));
+		window.resizeTo(iW, iH);
+		window.moveTo(((sW - iW) / 2), ((sH - iH) / 2));
+		// -- THIS IS JUST TO SET THE HTA WINDOW SIZE -- //
+
+		sel.selectedIndex = 1;
+
+		function obfuscateJS() {
+			if (sel.selectedIndex == 0) { //set the quotes
+				alert("select string quotes!");
+				return;
+			} else if (sel.selectedIndex == 1) {
+				qts = '"';
+			} else {
+				qts = "'";
+			}
+			var txt = inp.value;
+			var tmp = txt;
+			var vrb = "_0xf41d=[" //create an array for obfuscate
+			var arr = new Array(); //new unlimited array
+			var nmb = 0; //this is array number in obfscated JS
+			while (tmp.search(qts) != -1) { //if found any quotes
+				if (sel.selectedIndex == 1) {
+					arr[nmb] = tmp.match(/"([^"]+)"/)[1]; //get string inside ""
+				} else {
+					arr[nmb] = tmp.match(/'([^']+)'/)[1]; //get string inside ''
+				}
+				for (var i = 0; i <= 1; i++) { //replace only 2 quotes
+					tmp = tmp.replace(qts, '');
+				}
+				txt = txt.replace(qts + arr[nmb] + qts, '_0xf41d[' + nmb + "]"); //replace string as array call _0xf41d[ArrNum]
+				nmb += 1;
+			}
+			for (var i = 0; i < arr.length; i++) {
+				vrb += '"' + toHex(arr[i]) + '",'; //convert a char to hex
+			}
+			vrb = vrb.substr(0, vrb.length - 1) + "];";
+			out.value = (vrb + txt).replace(/(?:\r\n|\r|\n)/g, ';').replace(/(?:\r\t|\r|\t)/g, '').replace('_0xf41d=];', ''); //replace enter, tab, and incomplete array _0xf41d=];
+			out.value = out.value.replace(/;;|{;|};/g, function(x){return x.substring(0, 1);}); //replace {; }; ;; wtih that first substring(0,1)
+		}
+
+		function toHex(str) { //convert to hex with \xHEX return
+			var hex = "";
+			for (var i = 0; i < str.length; i++) {
+			hex += '\\x' + str.charCodeAt(i).toString(16);
+			}
+			return hex;
+		}
+	</script>
+</html>
